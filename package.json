@@ -1,0 +1,24 @@
+{
+  "name": "packet-reader",
+  "version": "1.0.0",
+  "description": "A tiny wrapper for tcpdump",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Tests not implemented'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/4rzael/node_packet-reader.git"
+  },
+  "keywords": [
+    "packet",
+    "record",
+    "tcpdump"
+  ],
+  "author": "4rzael (maxime.agor23@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/4rzael/node_packet-reader/issues"
+  },
+  "homepage": "https://github.com/4rzael/node_packet-reader"
+}
