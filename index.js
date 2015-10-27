@@ -56,9 +56,12 @@ function PacketReader(monitor_interface) {
     };
 
     this.stop = function () {
-        readliner.close();
-        errorReader.close();
-        tcpdumpProcess.kill();
+        if (readliner)
+            readliner.close();
+        if (errorReader)
+            errorReader.close();
+        if (tcpdumpProcess)
+            tcpdumpProcess.kill();
 
         readliner = null;
         errorReader = null;
