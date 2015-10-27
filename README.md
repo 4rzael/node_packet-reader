@@ -9,6 +9,7 @@ packet-reader is a tiny node module for packet reading.
 
 It allows, for example, to scan wifi environment and find wifi devices around.
 
+
 ## How to use it ?
 
 Here is an example of code :
@@ -38,7 +39,17 @@ pr.on('error', function (err) {
 
 At this time, it just allows to see MAC addresses and signal strengths.
 
-Feel free to add content !
+Feel free to add contents !
+
+
+## requires
+
+* tcpdump
+
+* node v0.10.X
+
+* A monitor interface to read packets from
+
 
 ## License
 
