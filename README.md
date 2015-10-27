@@ -17,15 +17,19 @@ Here is an example of code :
 ```js
 'use strict';
 
-var PacketReader = require('packetReader');
+// Records for 30 seconds, then exit
+
+var PacketReader = require('packet-reader');
 
 var pr = new PacketReader('wlan0mon');
+
+pr.start();
 
 pr.on('packet', function (packet) {
     console.log('packet received from ', packet.mac_address, ', signal_strength :', packet.signal_strength);
 });
 
-pr.on('close', function () {
+pr.on('end', function () {
     console.log('Bye Bye.');
     process.exit(-1);
 });
@@ -33,6 +37,8 @@ pr.on('close', function () {
 pr.on('error', function (err) {
     console.log('ERROR:', err);
 });
+
+setTimeout(pr.stop, 30000);
 ```
 
 ## What infos does it provide ?

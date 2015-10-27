@@ -25,32 +25,47 @@ function PacketReader(monitor_interface) {
         output: voidStream
     });
 
-    tcpdumpProcess.on('close', function () {
+    this.start = function () {
+        tcpdumpProcess.on('close', function () {
+            readliner.close();
+            errorReader.close();
+            self.emit('end');
+        });
+
+        errorReader.on('line', function (buffer) {
+            self.emit('error', buffer.toString());
+        });
+
+        readliner.on('line', function (buffer) {
+            var line = buffer.toString();
+            var match;
+
+            match = line.match(/SA:(..:..:..:..:..:..)/);
+            var mac_address = match ? match[1].toUpperCase() : undefined;
+
+            match = line.match(/(-\d{1,2})dB/);
+            var signal_strength = match ? match[1] : undefined;
+
+            if (mac_address !== undefined && signal_strength !== undefined) {
+                self.emit('packet', {
+                    mac_address: mac_address,
+                    signal_strength: signal_strength
+                });
+            }
+        });
+    };
+
+    this.stop = function () {
         readliner.close();
-        self.emit('close');
-    });
+        errorReader.close();
+        tcpdumpProcess.kill();
 
-    errorReader.on('line', function (buffer) {
-        self.emit('error', buffer.toString());
-    });
+        readliner = null;
+        errorReader = null;
+        tcpdumpProcess = null;
+        self.emit('end');
+    };
 
-    readliner.on('line', function (buffer) {
-        var line = buffer.toString();
-        var match;
-
-        match = line.match(/SA:(..:..:..:..:..:..)/);
-        var mac_address = match ? match[1].toUpperCase() : undefined;
-
-        match = line.match(/(-\d{1,2})dB/);
-        var signal_strength = match ? match[1] : undefined;
-
-        if (mac_address !== undefined && signal_strength !== undefined) {
-            self.emit('packet', {
-                mac_address: mac_address,
-                signal_strength: signal_strength
-            });
-        }
-    });
 }
 
 util.inherits(PacketReader, EventEmitter);
