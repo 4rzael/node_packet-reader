@@ -76,7 +76,7 @@ function PacketReader(monitor_interface) {
             if (mac_address !== undefined && signal_strength !== undefined) {
                 self.emit('packet', {
                     mac_address: mac_address,
-                    signal_strength: signal_strength
+                    signal_strength: parseInt(signal_strength, 10)
                 });
             }
         });
