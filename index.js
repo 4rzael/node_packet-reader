@@ -66,7 +66,7 @@ function PacketReader(monitor_interface) {
         readliner = null;
         errorReader = null;
         tcpdumpProcess = null;
-        self.emit('end');
+        self.emit('stop');
     };
 
 }
