@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 
 var fs = require('fs');
 var readline = require('readline');
@@ -13,22 +13,49 @@ function PacketReader(monitor_interface) {
 
     var voidStream = fs.createWriteStream('/dev/null'); // Not needed in node v4
 
-    var tcpdumpProcess = spawn('tcpdump', ['-I', '-e', '-q', '-t', '-U', '-i', monitor_interface || 'wlan0mon']);
+    var tcpdumpProcess;
+    var readliner;
+    var errorReader;
 
-    var readliner = readline.createInterface({
-        input: tcpdumpProcess.stdout,
-        output: voidStream
-    });
 
-    var errorReader = readline.createInterface({
-        input: tcpdumpProcess.stderr,
-        output: voidStream
-    });
+    this.stop = function () {
+        if (readliner)
+            readliner.close();
+        if (errorReader)
+            errorReader.close();
+        if (tcpdumpProcess)
+            tcpdumpProcess.kill();
+
+        readliner = null;
+        errorReader = null;
+        tcpdumpProcess = null;
+        self.emit('stop');
+    };
+
 
     this.start = function () {
+
+        if (tcpdumpProcess || readliner || errorReader) { // if already started
+            self.emit('error', "PacketReader already started");
+            return ;
+        }
+        // start tcpdump
+        tcpdumpProcess = spawn('tcpdump', ['-I', '-e', '-q', '-t', '-U', '-i', monitor_interface || 'wlan0mon']);
+
+        readliner = readline.createInterface({
+            input: tcpdumpProcess.stdout,
+            output: voidStream
+        });
+
+        errorReader = readline.createInterface({
+                input: tcpdumpProcess.stderr,
+                output: voidStream
+        });
+
+
+        // add listeners
         tcpdumpProcess.on('close', function () {
-            readliner.close();
-            errorReader.close();
+            self.stop();
             self.emit('end');
         });
 
@@ -54,21 +81,6 @@ function PacketReader(monitor_interface) {
             }
         });
     };
-
-    this.stop = function () {
-        if (readliner)
-            readliner.close();
-        if (errorReader)
-            errorReader.close();
-        if (tcpdumpProcess)
-            tcpdumpProcess.kill();
-
-        readliner = null;
-        errorReader = null;
-        tcpdumpProcess = null;
-        self.emit('stop');
-    };
-
 }
 
 util.inherits(PacketReader, EventEmitter);
