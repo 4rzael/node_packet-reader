@@ -26,7 +26,7 @@ var pr = new PacketReader('wlan0mon');
 pr.start();
 
 pr.on('packet', function (packet) {
-    console.log('packet received from ', packet.mac_address, ', signal_strength :', packet.signal_strength);
+    console.log('packet received from ', packet.mac_address, ', signal_strength :', packet.signal_strength, 'type :', packet.type);
 });
 
 pr.on('end', function () {
@@ -43,7 +43,19 @@ setTimeout(pr.stop, 30000);
 
 ## What infos does it provide ?
 
-At this time, it just allows to see MAC addresses and signal strengths.
+At this time, it only provides theses infos about packets :
+
+* sender MAC address
+
+* sender signal strength
+
+* receiver MAC address
+
+* frame type ('Beacon', 'Probe Request' or 'other')
+
+* BSSID of the sender if Beacon
+
+* AP name if Beacon
 
 Feel free to add contents !
 
@@ -54,7 +66,7 @@ Feel free to add contents !
 
 * node v0.10.X
 
-* A monitor interface to read packets from
+* A monitoring interface to read packets from
 
 
 ## License
