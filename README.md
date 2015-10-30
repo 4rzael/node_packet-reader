@@ -51,7 +51,7 @@ At this time, it only provides theses infos about packets :
 
 * receiver MAC address
 
-* frame type ('Beacon', 'Probe Request' or 'other')
+* frame type ('Beacon', 'Probe Request', 'Probe Response' or 'other')
 
 * BSSID of the sender if Beacon
 
